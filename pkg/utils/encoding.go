@@ -3,7 +3,20 @@ package utils
 import (
 	"encoding/base64"
 	"encoding/hex"
+	"log"
 )
+
+func DecodeHex(s string) []byte {
+	v, err := hex.DecodeString(s)
+	if err != nil {
+		log.Fatal("failed to decode hex:", s)
+	}
+	return v
+}
+
+func EncodeHex(b []byte) string {
+	return hex.EncodeToString(b)
+}
 
 func HexToBase64(input string) (string, error) {
 	value, err := hex.DecodeString(input)
