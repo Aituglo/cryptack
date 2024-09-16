@@ -2,6 +2,7 @@ package stream
 
 import (
 	"bytes"
+	"encoding/base64"
 	"github.com/aituglo/cryptack/pkg/utils"
 	"os"
 	"strings"
@@ -39,4 +40,23 @@ I go crazy when I hear a cymbal`)
 	if !bytes.Equal(res, utils.DecodeHex("0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f")) {
 		t.Error("wrong result:", res)
 	}
+}
+
+func TestAttackRepeatingKeyXOR(t *testing.T) {
+	corpus := utils.GetLanguageFrequency("english")
+
+	text, err := os.ReadFile("testfiles/repeating_key_xor_base64.txt")
+	if err != nil {
+		t.Fatal("failed to read file:", err)
+	}
+	value, err := base64.StdEncoding.DecodeString(string(text))
+	if err != nil {
+		t.Fatal("failed to decode base64:", value)
+	}
+	t.Log("likely size:", FindRepeatingXORSize(value, 40))
+
+	key := FindRepeatingXORKey(value, corpus, 40)
+	t.Logf("likely key: %q", key)
+
+	t.Logf("%s", RepeatingKeyXOR(value, key))
 }
